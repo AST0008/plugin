@@ -2,16 +2,23 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
+const Questions = [
+  "What is your favorite color?",
+  "What is your favorite food?",
+  "What is your favorite movie?",
+  "What is your favorite book?",
+];
+
 export default function Recording() {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [videoChunks, setVideoChunks] = useState([]);
   const [audioChunks, setAudioChunks] = useState([]);
+  const [responses, setResponses] = useState([]); // Store all video/audio responses
+  const [isUploading, setUploading] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [audioRecorder, setAudioRecorder] = useState(null);
   const [mediaStream, setMediaStream] = useState(null);
-  const [isUploading, setUploading] = useState(false);
-  const [isRecorded, setIsRecorded] = useState(false); // Indicates that a recording was completed
-
   const videoRef = useRef(null);
 
   // Request access to camera and microphone
@@ -45,9 +52,7 @@ export default function Recording() {
       };
       videoAudioRecorder.onstop = () => {
         // When this fires, all video chunks have been added
-        // We'll rely on the user to click "Upload Recordings"
       };
-
       setMediaRecorder(videoAudioRecorder);
 
       // Extract audio track only
@@ -62,145 +67,98 @@ export default function Recording() {
       audioOnlyRecorder.onstop = () => {
         // All audio chunks ready here as well
       };
-
       setAudioRecorder(audioOnlyRecorder);
     }
   }, [mediaStream]);
 
+  // Start recording for a specific question
   const startRecording = () => {
-    if (
-      mediaRecorder &&
-      audioRecorder &&
-      mediaRecorder.state !== "recording" &&
-      audioRecorder.state !== "recording"
-    ) {
-      setVideoChunks([]);
-      setAudioChunks([]);
-      setIsRecorded(false);
+    if (mediaRecorder && audioRecorder && mediaRecorder.state !== "recording") {
+      setIsRecording(true);
+      setVideoChunks([]); // Reset video chunks for the new question
+      setAudioChunks([]); // Reset audio chunks for the new question
       mediaRecorder.start();
       audioRecorder.start();
-      setIsRecording(true);
     }
   };
 
+  // Stop recording for the current question
   const stopRecording = () => {
     if (mediaRecorder && audioRecorder) {
-      if (mediaRecorder.state === "recording") mediaRecorder.stop();
-      if (audioRecorder.state === "recording") audioRecorder.stop();
       setIsRecording(false);
-      setIsRecorded(true);
+      mediaRecorder.stop();
+      audioRecorder.stop();
+      // Store the recording data in responses for the current question
+      setResponses((prev) => [
+        ...prev,
+        { video: videoChunks, audio: audioChunks },
+      ]);
     }
   };
 
-  const downloadVideoRecording = () => {
-    if (videoChunks.length) {
-      const blob = new Blob(videoChunks, { type: "video/webm" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = "recording_with_audio.webm";
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
+  // Move to the next question
+  const nextQuestion = () => {
+    if (currentQuestion < Questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      alert("You have completed the quiz!");
     }
   };
 
-  const downloadAudioOnly = () => {
-    if (audioChunks.length) {
-      const blob = new Blob(audioChunks, { type: "audio/webm" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = "audio_only.webm";
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-  };
-
+  // Upload the responses to the server
   const uploadRecordings = async () => {
-    if (videoChunks.length === 0 && audioChunks.length === 0) {
-      console.warn("No recordings to upload.");
-      return;
-    }
-
     setUploading(true);
-
     try {
-      const videoBlob = new Blob(videoChunks, { type: "video/webm" });
-      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-
       const formData = new FormData();
-      formData.append("video", videoBlob, "recording_with_audio.webm");
-      formData.append("audio", audioBlob, "audio_only.webm");
+      responses.forEach((response, index) => {
+        const videoBlob = new Blob(response.video, { type: "video/webm" });
+        const audioBlob = new Blob(response.audio, { type: "audio/webm" });
 
+        formData.append("files", videoBlob, `video_${index + 1}.webm`);
+        formData.append("files", audioBlob, `audio_${index + 1}.webm`);
+      });
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1].name}`);
+      }
+
+      // Example API call (you can replace with your own backend URL)
       const response = await fetch("http://localhost:8000/upload", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        console.log("Recordings uploaded successfully!");
-        // Reset chunks after successful upload
-        setVideoChunks([]);
-        setAudioChunks([]);
-        setIsRecorded(false);
+        alert("Recordings uploaded successfully!");
       } else {
-        console.error("Upload failed:", response.statusText);
+        alert("Failed to upload recordings.");
       }
     } catch (error) {
       console.error("Error uploading recordings:", error);
-    } finally {
-      setUploading(false);
     }
+    setUploading(false);
   };
 
   return (
     <div>
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        style={{ width: "400px", height: "300px", backgroundColor: "#ccc" }}
-      ></video>
-      <div className="flex gap-2 mt-2">
-        {!isRecording && !isUploading && (
-          <button className="btn btn-primary" onClick={startRecording}>
-            Start Recording
+      <h1>{Questions[currentQuestion]}</h1>
+      <video ref={videoRef} autoPlay muted />
+      <div>
+        <button onClick={startRecording} disabled={isRecording}>
+          Start Recording
+        </button>
+        <button onClick={stopRecording} disabled={!isRecording}>
+          Stop Recording
+        </button>
+      </div>
+      <div>
+        {currentQuestion < Questions.length - 1 ? (
+          <button onClick={nextQuestion} disabled={isRecording}>
+            Next Question
           </button>
-        )}
-        {isRecording && (
-          <button className="btn btn-primary" onClick={stopRecording}>
-            Stop Recording
+        ) : (
+          <button onClick={uploadRecordings} disabled={isUploading}>
+            Upload Recordings
           </button>
-        )}
-
-        {/* Only show download buttons if we have recorded something and aren't recording now */}
-        {!isRecording && isRecorded && videoChunks.length > 0 && (
-          <>
-            <button className="btn btn-primary" onClick={downloadVideoRecording}>
-              Download Video+Audio
-            </button>
-            {audioChunks.length > 0 && (
-              <button className="btn btn-primary" onClick={downloadAudioOnly}>
-                Download Audio Only
-              </button>
-            )}
-            {!isUploading && (
-              <button className="btn btn-primary" onClick={uploadRecordings}>
-                Upload Recordings
-              </button>
-            )}
-          </>
-        )}
-
-        {isUploading && (
-          <div className="mt-2 text-sm text-gray-500">
-            Uploading recordings...
-          </div>
         )}
       </div>
     </div>
