@@ -13,37 +13,31 @@ def record_audio():
         audio_data = []  # Store chunks of audio
         start_time = time.time()
         silence_start = None
-
+        
         while True:
             try:
                 # Capture short chunks of audio
                 audio_chunk = recognizer.listen(source, timeout=5, phrase_time_limit=5)
                 audio_data.append(audio_chunk)
                 
-                # Check audio energy for silence
-                energy = recognizer.energy_threshold
-                if audio_chunk.get_raw_data():
-                    chunk_energy = max(audio_chunk.frame_data)  # Maximum amplitude
-                    if chunk_energy < energy:
-                        if silence_start is None:
-                            silence_start = time.time()
-                        elif time.time() - silence_start > 1.5:  # Silence for 1.5 seconds
-                            print("Silence detected. Stopping recording.")
-                            break
-                    else:
-                        silence_start = None  # Reset silence timer on speech
-
+                # Reset silence timer when audio is detected
+                silence_start = None
+                
                 # Check if the maximum recording time (60 seconds) is reached
                 if time.time() - start_time > 60:
                     print("Maximum recording time reached.")
                     break
+            
             except sr.WaitTimeoutError:
+                # If no audio is detected (timeout)
                 if silence_start is None:
-                    silence_start = time.time()  # Mark when silence started
-                elif time.time() - silence_start > 1.5:
+                    silence_start = time.time()
+                
+                # Check if silence duration exceeds 1.5 seconds
+                if silence_start and time.time() - silence_start > 1.5:
                     print("Silence detected. Stopping recording.")
                     break
-
+        
         if audio_data:
             # Combine all chunks into a single audio object
             combined_audio = sr.AudioData(
