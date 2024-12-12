@@ -13,6 +13,7 @@ import {
   ArcElement,
 } from "chart.js";
 import { jsPDF } from "jspdf";
+import { useRouter } from "next/navigation";
 
 // Register necessary Chart.js components
 ChartJS.register(
@@ -26,18 +27,14 @@ ChartJS.register(
 );
 
 const Report = () => {
+    const router = useRouter();
+
     
   // Sample data, in practice, this data would likely come from an API or be passed as props
   const [rating, setRating] = useState(8); // Rating out of 10
-  const [corrections, setCorrections] = useState(
-    "The user made several grammatical errors during the video."
-  );
-  const [thingsCouldBeBetter, setThingsCouldBeBetter] = useState(
-    "The pacing of the response could have been improved."
-  );
-  const [suggestions, setSuggestions] = useState(
-    "Avoid using filler words like 'um' and 'uh'. Practice more before recording."
-  );
+  const [corrections, setCorrections] = useState("The user made several grammatical errors during the video.");
+  const [thingsCouldBeBetter, setThingsCouldBeBetter] = useState("The pacing of the response could have been improved.");
+  const [suggestions, setSuggestions] = useState("Avoid using filler words like 'um' and 'uh'. Practice more before recording.");
   const [grammaticalErrors, setGrammaticalErrors] = useState(3); // Number of grammatical errors
   const [stuttering, setStuttering] = useState(2); // Number of stuttering occurrences
 
@@ -124,7 +121,7 @@ const Report = () => {
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col justify-center items-center py-8">
-      <button className="absolute top-10 right-12 btn btn-secondary">
+      <button onClick={() => router.push('/data')} className="absolute top-10 right-12 btn btn-secondary">
         Go back to Home
       </button>
       <h1 className="text-3xl font-bold text-center  mb-6">Recording Report</h1>
