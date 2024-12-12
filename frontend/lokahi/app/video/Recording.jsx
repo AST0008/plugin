@@ -20,6 +20,7 @@ export default function Recording() {
   const [audioRecorder, setAudioRecorder] = useState(null);
   const [mediaStream, setMediaStream] = useState(null);
   const videoRef = useRef(null);
+  const [recordingTime, setRecordingTime] = useState(0); // Recording timer
 
   // Request access to camera and microphone
   useEffect(() => {
@@ -105,6 +106,36 @@ export default function Recording() {
     }
   };
 
+
+  const handleStartStop = () => {
+    if (isRecording) {
+      mediaRecorder.stop();
+      audioRecorder.stop();
+      setIsRecording(false);
+    } else {
+      mediaRecorder.start();
+      audioRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0); // Reset recording time
+    }
+  };
+  const handleNextQuestion = () => {
+    setResponses([...responses, { video: videoChunks, audio: audioChunks }]);
+    setVideoChunks([]); // Reset video chunks
+    setAudioChunks([]); // Reset audio chunks
+    setCurrentQuestion((prev) => (prev + 1) % Questions.length); // Loop through questions
+  };
+
+
+  useEffect(() => {
+    let timer;
+    if (isRecording) {
+      timer = setInterval(() => {
+        setRecordingTime((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isRecording]);
   // Upload the responses to the server
   const uploadRecordings = async () => {
     setUploading(true);
@@ -139,27 +170,62 @@ export default function Recording() {
   };
 
   return (
-    <div>
-      <h1>{Questions[currentQuestion]}</h1>
-      <video ref={videoRef} autoPlay muted />
-      <div>
-        <button onClick={startRecording} disabled={isRecording}>
-          Start Recording
-        </button>
-        <button onClick={stopRecording} disabled={!isRecording}>
-          Stop Recording
+    <div className="min-h-screen flex flex-col items-center bg-base-200 justify-center  p-4">
+      <div className=" w-screen max-w-md bg-slate-600 rounded-lg shadow-lg p-6">
+        {/* Video Preview */}
+        <div className="relative mb-4">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            className="w-full  rounded-lg border-2 border-gray-300"
+          ></video>
+        </div>
+
+        {/* Question */}
+        <div className="mb-6 text-center text-xl font-semibold">
+          <p>{Questions[currentQuestion]}</p>
+        </div>
+
+        {/* Recording Timer */}
+        <div className="mb-6 text-center">
+          <p className="text-lg">
+            {isRecording ? `Recording: ${recordingTime}s` : "Ready to Record"}
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={handleStartStop}
+            className={`btn w-24 ${isRecording ? "btn-danger" : "btn-success"}`}
+          >
+            {isRecording ? "Stop" : "Start"}
+          </button>
+
+         
+          <button
+            onClick={handleNextQuestion}
+            disabled={isRecording || isUploading}
+            className="btn w-24 btn-primary"
+          >
+            Next
+          </button>
+        </div>
+
+        {/* Uploading Feedback */}
+        {isUploading && (
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-500">Uploading...</p>
+            <div className="w-16 h-16 mx-auto border-t-4 border-blue-500 rounded-full animate-spin"></div>
+          </div>
+        )}
+
+<div className="mt-4">
+        <button onClick={uploadRecordings} disabled={isUploading || responses.length != 4} className="btn py-2 px-4 rounded-lg text-white bg-purple-500 hover:bg-purple-600">
+          Upload Response
         </button>
       </div>
-      <div>
-        {currentQuestion < Questions.length - 1 ? (
-          <button onClick={nextQuestion} disabled={isRecording}>
-            Next Question
-          </button>
-        ) : (
-          <button onClick={uploadRecordings} disabled={isUploading}>
-            Upload Recordings
-          </button>
-        )}
       </div>
     </div>
   );
