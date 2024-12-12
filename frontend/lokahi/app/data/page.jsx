@@ -84,7 +84,7 @@ export default function RecordingsPage() {
                       href={recording.audio_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn btn-primary text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md"
+                      className="btn btn-primary text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-md"
                     >
                       Listen Audio
                     </a>
@@ -92,7 +92,7 @@ export default function RecordingsPage() {
                       href={recording.video_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn btn-primary text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md"
+                      className="btn btn-primary text-white bg-green-500 hover:bg-green-700 px-4 py-2 rounded-md"
                     >
                       Watch Video
                     </a>
