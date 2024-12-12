@@ -11,7 +11,7 @@ const Questions = [
 ];
 
 export default function Recording() {
-  const router = useRouter()
+  const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [videoChunks, setVideoChunks] = useState([]);
@@ -108,7 +108,6 @@ export default function Recording() {
     }
   };
 
-
   const handleStartStop = () => {
     if (isRecording) {
       mediaRecorder.stop();
@@ -127,7 +126,6 @@ export default function Recording() {
     setAudioChunks([]); // Reset audio chunks
     setCurrentQuestion((prev) => (prev + 1) % Questions.length); // Loop through questions
   };
-
 
   useEffect(() => {
     let timer;
@@ -155,14 +153,14 @@ export default function Recording() {
       }
 
       // Example API call (you can replace with your own backend URL)
-      const response = await fetch("https://plugin-brown.vercel.app/upload", {
+      const response = await fetch("http://localhost:3000/upload", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
         alert("Recordings uploaded successfully!");
-        router.push('/feedback')
+        router.push("/feedback");
       } else {
         alert("Failed to upload recordings.");
       }
@@ -206,7 +204,6 @@ export default function Recording() {
             {isRecording ? "Stop" : "Start"}
           </button>
 
-         
           <button
             onClick={handleNextQuestion}
             disabled={isRecording || isUploading}
@@ -224,11 +221,15 @@ export default function Recording() {
           </div>
         )}
 
-<div className="mt-4">
-        <button onClick={uploadRecordings} disabled={isUploading || responses.length != 4} className="btn py-2 px-4 rounded-lg text-white bg-purple-500 hover:bg-purple-600">
-          Upload Response
-        </button>
-      </div>
+        <div className="mt-4">
+          <button
+            onClick={uploadRecordings}
+            disabled={isUploading || responses.length != 4}
+            className="btn py-2 px-4 rounded-lg text-white bg-purple-500 hover:bg-purple-600"
+          >
+            Upload Response
+          </button>
+        </div>
       </div>
     </div>
   );
