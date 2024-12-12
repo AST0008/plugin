@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 const Questions = [
@@ -10,6 +11,7 @@ const Questions = [
 ];
 
 export default function Recording() {
+  const router = useRouter()
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [videoChunks, setVideoChunks] = useState([]);
@@ -153,13 +155,14 @@ export default function Recording() {
       }
 
       // Example API call (you can replace with your own backend URL)
-      const response = await fetch("http://localhost:8000/upload", {
+      const response = await fetch("https://plugin-brown.vercel.app/upload", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
         alert("Recordings uploaded successfully!");
+        router.push('/feedback')
       } else {
         alert("Failed to upload recordings.");
       }
