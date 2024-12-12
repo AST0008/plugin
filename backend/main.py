@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 # Configure CORS
 origins = [
     "http://localhost:3000",  # Frontend URL
+    "https://plugin-brown.vercel.app/"
 ]
 
 app.add_middleware(
