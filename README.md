@@ -1,4 +1,4 @@
-# Communication Assessment Tool
+# Plugin
 ## Description:
 The Communication Assessment Tool is an intuitive web application designed to evaluate and improve users' communication skills. It provides a comprehensive workflow for recording responses, collecting feedback, and generating personalized assessment reports. The tool supports multiple languages, enabling users to engage in their preferred medium for a seamless experience.
 
