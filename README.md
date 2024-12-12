@@ -92,12 +92,12 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ## Demo
 
-Insert gif or link to demo
+[Demo](https://drive.google.com/drive/u/1/folders/1FCDFuG0nccfqxQYr6FcIeGtC8KgfRuvD)
 
 
 ## Documentation
 
-[Documentation](https://linktodocumentation)
+[Documentation](https://docs.google.com/document/d/1tLKQSRIhLNbEBRq2WGmurN__nhzApAB97Tn1EjMFdbk/edit?tab=t.0)
 
 
 ## Authors
