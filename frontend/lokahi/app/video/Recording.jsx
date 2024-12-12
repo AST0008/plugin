@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 const Questions = [
-  "What is your favorite color?",
-  "What is your favorite food?",
-  "What is your favorite movie?",
-  "What is your favorite book?",
+  "Tell us about yourself?",
+  "What’s your view on remote work culture?",
+  "How do you stay updated with industry trends?",
+  "What inspired you to choose yourcareer path?",
 ];
 
 export default function Recording() {
@@ -153,7 +153,7 @@ export default function Recording() {
       }
 
       // Example API call (you can replace with your own backend URL)
-      const response = await fetch("http://localhost:3000/upload", {
+      const response = await fetch("http://localhost:8000/upload", {
         method: "POST",
         body: formData,
       });
