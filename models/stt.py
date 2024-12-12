@@ -1,5 +1,18 @@
 import requests
 import speech_recognition as sr
+from pydub import AudioSegment
+import os
+
+# Function to convert webm to wav
+def convert_webm_to_wav(webm_path, wav_path):
+    try:
+        print("Converting webm to wav...")
+        audio = AudioSegment.from_file(webm_path, format="webm")
+        audio.export(wav_path, format="wav")
+        print("Conversion complete.")
+    except Exception as e:
+        print("Error during conversion:", str(e))
+        raise e
 
 # Function to process audio from a file
 def process_audio_file(file_path):
@@ -35,8 +48,26 @@ def process_audio_file(file_path):
     except Exception as e:
         print("Error during transcription:", str(e))
 
-# Specify the path to the audio file
-file_path = "path_to_your_audio_file.wav"  # Replace with the actual file path
+# Main function to handle webm input
+def process_webm_file(webm_path):
+    try:
+        # Define a temporary wav file path
+        wav_path = "temp_audio.wav"
 
-# Process the audio file
-process_audio_file(file_path)
+        # Convert webm to wav
+        convert_webm_to_wav(webm_path, wav_path)
+
+        # Process the wav file
+        process_audio_file(wav_path)
+
+        # Clean up the temporary wav file
+        if os.path.exists(wav_path):
+            os.remove(wav_path)
+    except Exception as e:
+        print("Error during the process:", str(e))
+
+# Specify the path to the webm file
+webm_path = "path_to_your_audio_file.webm"  # Replace with the actual file path
+
+# Process the webm file
+process_webm_file(webm_path)

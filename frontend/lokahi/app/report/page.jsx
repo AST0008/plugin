@@ -30,15 +30,15 @@ const Report = () => {
   const router = useRouter();
 
   // Sample data, in practice, this data would likely come from an API or be passed as props
-  const [rating, setRating] = useState(8); // Rating out of 10
+  const [rating, setRating] = useState(7); // Rating out of 10
   const [corrections, setCorrections] = useState(
-    "The user made several grammatical errors during the video."
+    ' Grammar mistakes: "um" and "uh" are used incorrectly and repeatedly. Overuse of filler words: "like" is used too often. Unnatural pauses or hesitations: There are some pauses in the speech that seem unnatural'
   );
   const [thingsCouldBeBetter, setThingsCouldBeBetter] = useState(
-    "The pacing of the response could have been improved."
+    ' - Sentence variety: The speech could have been more engaging by using different sentence structures and varied vocabulary. Vocabulary usage: There are some words that are used too often, such as "like" and "um." Overall engagement: The speech could have been more engaging by using more body language and gestures. Using a more varied vocabulary would help capture the interviewers attention.'
   );
   const [suggestions, setSuggestions] = useState(
-    "Avoid using filler words like 'um' and 'uh'. Practice more before recording."
+    " Practice exercises: The user could benefit from practicing more speaking exercises to improve their grammar, pronunciation, and fluency. Learning resources: The user could benefit from learning more about grammar, pronunciation, and fluency through online resources or tutoring. Interactive activities: The user could benefit from participating in interactive activities, such as speaking clubs or self-review, to improve their speaking skills. Expert guidance: The user could benefit from seeking expert guidance, such as from a tutor or workshop, to improve their speaking skills."
   );
   const [grammaticalErrors, setGrammaticalErrors] = useState(3); // Number of grammatical errors
   const [stuttering, setStuttering] = useState(2); // Number of stuttering occurrences
