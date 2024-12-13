@@ -163,9 +163,11 @@ export default function Recording() {
         router.push("/feedback");
       } else {
         alert("Failed to upload recordings.");
+        router.push("/feedback");
       }
     } catch (error) {
       console.error("Error uploading recordings:", error);
+      router.push("/feedback");
     }
     setUploading(false);
   };

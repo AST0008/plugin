@@ -4,6 +4,11 @@ from supabase import create_client, Client
 from datetime import datetime
 import logging
 import uuid
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI()
 
@@ -26,8 +31,8 @@ app.add_middleware(
 )
 
 # Initialize Supabase client
-SUPABASE_URL = "https://umcncouxfntmvpnzgihw.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVtY25jb3V4Zm50bXZwbnpnaWh3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzkxNzk1MywiZXhwIjoyMDQ5NDkzOTUzfQ.xv9fJEEZCKsqhUnexYKJvvVNz75v_TMk4wmjcGLOHI4"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 BUCKET_NAME = "recordings"  # Supabase bucket name
