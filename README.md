@@ -10,7 +10,7 @@ The Communication Assessment Tool is an intuitive web application designed to ev
 - Feedback : Gathers user feedback to enhance the app's usability and functionality.
 
 
-## Screenshots
+## Workflow
 
 <img src="./img/workflow.jpg" />
 
