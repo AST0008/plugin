@@ -1,4 +1,4 @@
-# Communication Assessment Tool
+# Plugin
 ## Description:
 The Communication Assessment Tool is an intuitive web application designed to evaluate and improve users' communication skills. It provides a comprehensive workflow for recording responses, collecting feedback, and generating personalized assessment reports. The tool supports multiple languages, enabling users to engage in their preferred medium for a seamless experience.
 
@@ -92,12 +92,12 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ## Demo
 
-Insert gif or link to demo
+[Demo](https://drive.google.com/drive/u/1/folders/1FCDFuG0nccfqxQYr6FcIeGtC8KgfRuvD)
 
 
 ## Documentation
 
-[Documentation](https://linktodocumentation)
+[Documentation](https://docs.google.com/document/d/1tLKQSRIhLNbEBRq2WGmurN__nhzApAB97Tn1EjMFdbk/edit?tab=t.0)
 
 
 ## Authors
